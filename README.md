@@ -1,6 +1,5 @@
 # Start Where the Data Are: Statistical Priors for One-Step Generation on Manifolds
 
-Anonymous authors (CVPR 2027 submission).
 
 This archive contains the code for the paper. The method changes only how the noise of a one-step generator is drawn
 and paired with the data: a statistical prior is fitted once to the training data, and each data point is paired with
