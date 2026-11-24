@@ -1,0 +1,33 @@
+# @package _global_
+# Residue-type-conditioned generation of side-chain dihedral angles (chi1, chi2) for 14 residue types.
+defaults:
+  - override /data: amino_general
+  - override /model: meanflow_amino
+  - override /callbacks: default
+  - override /trainer: default
+
+tags: ["sidechain", "conditional", "meanflow"]
+seed: 0
+
+trainer:
+  min_epochs: 1
+  max_epochs: 200
+  gradient_clip_val: null
+
+model:
+  _target_: gfm.models.CondAminoModule
+  n_classes: 14
+  net:
+    d_in: 16
+    d_out: 2
+  optimizer:
+    lr: 1e-4
+    weight_decay: 0.001
+  prop_equal_times: 0.75
+  my_method: "mf"
+  val_step: 8
+
+data:
+  batch_size: 4096
+  data_type: chi14
+  data_dir: data/sidechain
