@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Backbone fragments of 10 and 20 residues in torsion space (T^20, T^40), uniform vs statistical prior.
+# Run from rmf/:  nohup bash scripts/run_pepwin_long.sh > pepwin_long.log 2>&1 &
+set -e
+export OMP_NUM_THREADS=${OMP_NUM_THREADS:-4} MKL_NUM_THREADS=${MKL_NUM_THREADS:-4} TORCHINDUCTOR_COMPILE_THREADS=1
+[ -f data/torus_windows/pepwin_k20.npy ] || python scripts/make_peptide_windows.py --ks 10 20
+C="trainer=gpu data.num_workers=2 ~callbacks.rich_progress_bar +trainer.enable_progress_bar=false callbacks.model_checkpoint.save_last=true ~callbacks.early_stopping trainer.max_epochs=${EPOCHS:-500}"
+G="model.prior_type=gmm model.prior_k=64 model.prior_coupling=soft model.prior_cov_scale=2.0"
+for S in ${SEEDS:-0 1}; do
+  for K in ${KS:-10 20}; do
+    D=$((2*K))
+    X="experiment=meanflow/meanflow_torus_synth data.data_dir=data/torus_windows data.data_type=pepwin_k$K model.net.d_in=$D model.in_shape=[$D] seed=$S"
+    echo ">>> fragments k=$K (T^$D) seed=$S uniform"; python -m rmf.train $X $C model.prior_type=uniform
+    echo ">>> fragments k=$K (T^$D) seed=$S gmm";     python -m rmf.train $X $C $G
+  done
+done
