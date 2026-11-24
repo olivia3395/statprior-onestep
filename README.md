@@ -4,7 +4,6 @@
 
 <sup>1</sup>Department of Mathematics and Statistics, Boston University  
 <sup>2</sup>School of Software, Shandong University  
-<sup>†</sup>Corresponding authors: haolsun@sdu.edu.cn, ysgong@sdu.edu.cn
 
 This repository contains the code for the paper. The method changes only how the noise of a one-step generator is
 drawn and paired with the data: a statistical prior is fitted once to the training data, and each data point is paired
